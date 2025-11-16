@@ -20,10 +20,21 @@ def load_requirements(requirements_file: str = "requirements.json") -> List[Dict
         print(f"Error: Requirements file not found: {requirements_path}", file=sys.stderr)
         sys.exit(1)
     
-    with open(requirements_path, 'r') as f:
-        data = json.load(f)
+    try:
+        with open(requirements_path, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+    except json.JSONDecodeError as e:
+        print(f"Error: Invalid JSON in requirements file: {e}", file=sys.stderr)
+        sys.exit(1)
+    except Exception as e:
+        print(f"Error: Failed to read requirements file: {e}", file=sys.stderr)
+        sys.exit(1)
     
-    return data.get('tools', [])
+    tools = data.get('tools', [])
+    if not tools:
+        print("Warning: No tools defined in requirements file", file=sys.stderr)
+    
+    return tools
 
 
 def generate_scoop_commands(tool: Dict[str, Any]) -> List[str]:
@@ -91,6 +102,19 @@ def generate_check_commands(tool: Dict[str, Any]) -> List[str]:
     return commands
 
 
+def validate_tool(tool: Dict[str, Any]) -> bool:
+    """Validate that a tool has required fields."""
+    if not tool.get('name'):
+        print(f"Warning: Tool missing 'name' field: {tool}", file=sys.stderr)
+        return False
+    
+    if not tool.get('scoop') and not tool.get('winget'):
+        print(f"Warning: Tool '{tool.get('name')}' has no installer configuration", file=sys.stderr)
+        return False
+    
+    return True
+
+
 def generate_installation_commands(tools: List[Dict[str, Any]], check_only: bool = False) -> None:
     """Generate and print PowerShell commands for all tools."""
     print("# VSDevContainer - Development Environment Setup")
@@ -98,7 +122,13 @@ def generate_installation_commands(tools: List[Dict[str, Any]], check_only: bool
     print("# Run these commands in PowerShell with administrator privileges")
     print()
     
-    for tool in tools:
+    valid_tools = [tool for tool in tools if validate_tool(tool)]
+    
+    if not valid_tools:
+        print("# No valid tools to process", file=sys.stderr)
+        return
+    
+    for tool in valid_tools:
         name = tool.get('name', 'Unknown Tool')
         priority = tool.get('priority', 'scoop')
         
