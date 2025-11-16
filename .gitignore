@@ -416,3 +416,19 @@ FodyWeavers.xsd
 *.msix
 *.msm
 *.msp
+# Python virtual environment
+venv/
+env/
+ENV/
+.venv/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Distribution / packaging
+dist/
+build/
+*.egg-info/
