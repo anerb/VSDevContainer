@@ -1,0 +1,40 @@
+{
+  "tools": [
+    {
+      "name": "Visual Studio 2022 Professional",
+      "scoop": {
+        "bucket": "versions",
+        "package": "visualstudio2022professional"
+      },
+      "winget": {
+        "id": "Microsoft.VisualStudio.2022.Professional"
+      },
+      "version": "17.8.0",
+      "priority": "scoop"
+    },
+    {
+      "name": "Git",
+      "scoop": {
+        "bucket": "main",
+        "package": "git"
+      },
+      "winget": {
+        "id": "Git.Git"
+      },
+      "version": "2.43.0",
+      "priority": "scoop"
+    },
+    {
+      "name": "GitHub CLI",
+      "scoop": {
+        "bucket": "main",
+        "package": "gh"
+      },
+      "winget": {
+        "id": "GitHub.cli"
+      },
+      "version": "2.40.0",
+      "priority": "scoop"
+    }
+  ]
+}
